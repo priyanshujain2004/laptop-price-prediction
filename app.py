@@ -2,15 +2,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from model import load_data, train_model
+from model import load_data, load_model
 
 st.title("Laptop Price Prediction App")
 
-# Load and preprocess the data
+# Load data and model
 data = load_data()
-
-# Train the model
-model = train_model(data)
+model = load_model()  # Load the pre-trained model
 
 st.header("Enter Laptop Details for Price Prediction")
 
