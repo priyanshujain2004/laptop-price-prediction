@@ -1,6 +1,6 @@
 # Laptop Price Prediction App
 
-This project is a **Laptop Price Prediction Web App** built using **Streamlit** and **Scikit-Learn**. The app allows users to input various laptop specifications and predicts the estimated price using a machine learning model.
+This project is a **Laptop Price Prediction Web App** built using **Streamlit**, **Scikit-Learn**, and **Pickle**. The app allows users to input various laptop specifications and predicts the estimated price using a pre-trained machine learning model.
 
 ---
 
@@ -18,6 +18,7 @@ This project is a **Laptop Price Prediction Web App** built using **Streamlit** 
   - Presence of SSD and HDD storage
 
 - Uses a **Random Forest Regressor** trained on a real-world dataset.
+- The model is saved using `pickle` to improve app performance by avoiding retraining.
 
 ---
 
@@ -26,9 +27,10 @@ This project is a **Laptop Price Prediction Web App** built using **Streamlit** 
 ```plaintext
 laptop-price-prediction/
 │
-├── model.py                # Model training and feature engineering logic
+├── model.py                # Model training and saving logic
 ├── app.py                  # Streamlit app interface
 ├── laptop_data.csv         # Dataset for training
+├── model.pkl               # Saved pre-trained model
 ├── requirements.txt        # Dependencies
 └── README.md               # Project description (this file)
 ```
@@ -41,6 +43,7 @@ laptop-price-prediction/
 - **Streamlit**: For building the web interface
 - **Scikit-Learn**: For data preprocessing and model training
 - **Pandas**: For data manipulation
+- **Pickle**: For saving and loading the trained model
 
 ---
 
@@ -57,12 +60,19 @@ laptop-price-prediction/
    pip install -r requirements.txt
    ```
 
-3. **Run the App**:
+3. **Train and Save the Model** (one-time step):
+   ```bash
+   python -c "from model import load_data, train_and_save_model; train_and_save_model(load_data())"
+   ```
+
+   This will create a `model.pkl` file containing the pre-trained model.
+
+4. **Run the App**:
    ```bash
    streamlit run app.py
    ```
 
-4. Open `http://localhost:8501` in your browser to access the app.
+5. Open `http://localhost:8501` in your browser to access the app.
 
 ---
 
@@ -92,9 +102,8 @@ The model uses the following steps:
    - **Random Forest Regressor** with hyperparameters tuned for better performance.
    - Log transformation is applied to the price to stabilize variance.
 
-3. **Evaluation**:
-   - Mean Squared Error (MSE) is used to evaluate the model’s accuracy.
-   - Cross-validation ensures generalization and avoids overfitting.
+3. **Saving the Model**:
+   - The trained model is saved to `model.pkl` using `pickle`.
 
 ---
 
