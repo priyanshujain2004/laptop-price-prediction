@@ -1,6 +1,7 @@
 # model.py
 import pandas as pd
 import numpy as np
+import pickle
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
@@ -30,13 +31,11 @@ def load_data():
 
     return data
 
-def train_model(data):
+def train_and_save_model(data, model_path='model.pkl'):
     # Features and target
     X = data.drop(columns=['Price', 'Unnamed: 0', 'ScreenResolution', 'Memory'])
     y = data['Price']
-
-    # Apply log transformation to stabilize target variance
-    y = np.log1p(y)
+    y = np.log1p(y)  # Apply log transformation
 
     # One-hot encoding for categorical features
     categorical_features = ['Company', 'TypeName', 'Cpu', 'Gpu', 'OpSys']
@@ -48,26 +47,22 @@ def train_model(data):
         ]
     )
 
-    # Create pipeline with a RandomForestRegressor
     model = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('regressor', RandomForestRegressor(n_estimators=300, max_depth=20, random_state=42))
     ])
 
-    # Split the data
+    # Split and train
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Train the model
     model.fit(X_train, y_train)
 
-    # Evaluate the model using cross-validation
-    scores = cross_val_score(model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')
-    mean_cv_mse = -scores.mean()
-    print(f"Cross-validated Mean Squared Error: {mean_cv_mse:.2f}")
+    # Save the trained model
+    with open(model_path, 'wb') as f:
+        pickle.dump(model, f)
 
-    # Evaluate on the test set
-    y_pred = model.predict(X_test)
-    mse = mean_squared_error(y_test, y_pred)
-    print(f"Model Mean Squared Error on Test Set: {mse:.2f}")
+    return model
 
+def load_model(model_path='model.pkl'):
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
     return model
